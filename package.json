@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@lexical/headless": "^0.12.6",
-    "@lexical/html": "^0.12.6",
-    "jsdom": "^23.2.0",
-    "lexical": "^0.12.6",
-    "lodash": "^4.17.21",
     "xml2js": "^0.6.2"
   }
 }

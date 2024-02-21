@@ -1,13 +1,3 @@
-import lexical from 'lexical';
-const {$getRoot, $getSelection} = lexical;
-import lexicalHeadless from '@lexical/headless';
-const {createHeadlessEditor} = lexicalHeadless;
-import lexicalHtml from '@lexical/html';
-const {$generateNodesFromDOM} = lexicalHtml;
-import jsdom from 'jsdom';
-const {JSDOM} = jsdom;
-import lodash from 'lodash';
-const {unescape} = lodash;
 import xml from 'xml2js';
 import fs from 'fs';
 
@@ -30,47 +20,10 @@ function main() {
   blog.data = extractData(content);
 
   const json = JSON.stringify(blog, null, 2);
-  console.log(json);
 
   fs.writeFileSync('blog.json', json, 'utf8');
 }
 
-
-function htmlToLexicalString(htmlString) {
-  const editorNodes = [] // Any custom nodes you register on the editor
-  const editor = createHeadlessEditor({ nodes: editorNodes });
-  const dom = new JSDOM(htmlString);
-  let parsingError = null;
-  editor.update(() => {
-    // In a headless environment you can use a package such as JSDom to parse the HTML string.
-
-    // Once you have the DOM instance it's easy to generate LexicalNodes.
-    const nodes = $generateNodesFromDOM(editor, dom.window.document);
-
-    // Select the root
-    $getRoot().select();
-
-    // Insert them at a selection.
-    const selection = $getSelection();
-    if (selection) {
-      try {
-        selection.insertNodes(nodes);
-      } catch (err) {
-        parsingError = err;
-      }
-    }
-
-  }, { discrete: true });
-  if (parsingError) {
-    throw parsingError;
-  }
-  const editorState = editor.getEditorState();
-  const json = editorState.toJSON();
-  
-  
-  const result = JSON.stringify(json);
-  return result;
-}
 
 function convertTimeFormat(time) {
   const year = time.substr(0, 4);
@@ -85,6 +38,14 @@ function convertTimeFormat(time) {
 function loadContent(path) {
   return fs.readFileSync(path, 'utf8');
 }
+
+function processHtml(html) {
+  return html.replace(/"http(s?):\/\/blog.odd-e.com\/(.*)\/(.*?)(-thumb.*?)?\.(.*?)"/g, '"https://localhost:8080/content/images/$3.$5"');
+}
+
+console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/develop%20causal%20%26%20dynamic%20thinking.jpg" alt="1.jpg" /></p>'));
+console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/assets_c/2023/10/develop%20causal%20%26%20dynamic%20thinking-thumb-450xauto-577.jpg" alt="1.jpg" /></p>'));
+console.log(processHtml('<p><img src="http://blog.odd-e.com/basvodde/learning_scaling.jpg" alt="1.jpg" /></p>'));
 
 function extractData(content) {
   let data = {
@@ -107,7 +68,8 @@ function extractData(content) {
       post.title = entry.$.title;
       post.status = "published";
       post.published_at = convertTimeFormat(entry.$.authored_on);
-      post.lexical = htmlToLexicalString(entry.text[0]);
+      // post.lexical = htmlToLexicalString(entry.text[0]);
+      post.html = processHtml(entry.text[0]);
       data.posts.push(post);
 
       let user = data.users.find((user) => user.id === entry.$.author_id);
