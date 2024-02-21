@@ -1,6 +1,4 @@
 built/
 node_modules/
 blog.json
-yarn.lock
-package-lock.json
 
