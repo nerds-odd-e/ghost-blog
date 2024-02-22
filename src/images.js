@@ -10,7 +10,8 @@ export function migrateImages(options) {
     files.forEach((file) => {
       if (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png')) {
         const sourcePath = path.join(options.backupDir, file)
-        const newFileName = file.replace(/^\d{1,4}-/, '');
+        let newFileName = file.replace(/^\d{1,4}-/, '');
+        newFileName = newFileName.replace(/^\W/g, '');
         const destinationPath = path.join(imageDir, newFileName)
         fs.copyFileSync(sourcePath, destinationPath);
       }
