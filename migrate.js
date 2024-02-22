@@ -1,11 +1,13 @@
 import xml from 'xml2js';
 import fs from 'fs';
+import path from 'path';
 
 main();
 
 function main() {
-  const path = '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/Movable_Type-2024-01-19-13-48-55-Backup-1.xml';
-  const content = loadContent(path);
+
+  const xmlfile = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/Movable_Type-2024-01-19-13-48-55-Backup-1.xml';
+  const content = loadContent(xmlfile);
   let blog = {
     "meta":{
       "exported_on":  1388805572000,
@@ -22,6 +24,8 @@ function main() {
   const json = JSON.stringify(blog, null, 2);
 
   fs.writeFileSync('blog.json', json, 'utf8');
+
+  renameImages(path.dirname(xmlfile));
 }
 
 
@@ -43,9 +47,9 @@ function processHtml(html) {
   return html.replace(/"http(s?):\/\/blog.odd-e.com\/(.*)\/(.*?)(-thumb.*?)?\.(.*?)"/g, '"https://localhost:8080/content/images/$3.$5"');
 }
 
-console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/develop%20causal%20%26%20dynamic%20thinking.jpg" alt="1.jpg" /></p>'));
-console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/assets_c/2023/10/develop%20causal%20%26%20dynamic%20thinking-thumb-450xauto-577.jpg" alt="1.jpg" /></p>'));
-console.log(processHtml('<p><img src="http://blog.odd-e.com/basvodde/learning_scaling.jpg" alt="1.jpg" /></p>'));
+//console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/develop%20causal%20%26%20dynamic%20thinking.jpg" alt="1.jpg" /></p>'));
+//console.log(processHtml('<p><img src="https://blog.odd-e.com/yilv/assets_c/2023/10/develop%20causal%20%26%20dynamic%20thinking-thumb-450xauto-577.jpg" alt="1.jpg" /></p>'));
+//console.log(processHtml('<p><img src="http://blog.odd-e.com/basvodde/learning_scaling.jpg" alt="1.jpg" /></p>'));
 
 function extractData(content) {
   let data = {
@@ -90,4 +94,24 @@ function extractData(content) {
     }
   });
   return data;
+}
+
+function renameImages(backupDir) {
+  fs.readdir(backupDir, (err, files) => {
+    if (err) return console.error(err);
+    files.forEach((file) => {
+      if (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png')) {
+        const newFile = file.replace(/^\d{1,4}-/, '');
+        const origPath = path.join(backupDir, file)
+        const newFilePath = path.join(backupDir, newFile)
+        fs.rename(origPath, newFilePath, (err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log(origPath, '->', newFilePath);
+          }
+        });
+      }
+    })
+  })
 }
