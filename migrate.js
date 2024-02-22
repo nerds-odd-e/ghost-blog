@@ -2,6 +2,8 @@ import xml from 'xml2js';
 import fs from 'fs';
 import path from 'path';
 
+const outputDir = 'output';
+const outputContentDir = path.join(outputDir, 'blog');
 main();
 
 function main() {
@@ -26,11 +28,17 @@ function main() {
 
   const json = JSON.stringify(blog, null, 2);
 
-  fs.writeFileSync('blog.json', json, 'utf8');
+  ensureDir(outputContentDir);
+  fs.writeFileSync(path.join(outputContentDir,'blog.json'), json, 'utf8');
 
   //renameImages(path.dirname(backupDir));
 }
 
+function ensureDir(dir) {
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
 
 function convertTimeFormat(time) {
   const year = time.substr(0, 4);
@@ -48,6 +56,7 @@ function loadContent(path) {
 
 export function processHtml(html) {
   let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(.*?)"/g;
+  console.log(html.match(assetUrlRegex));
   return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-')}.${ext}"`);
 }
 
