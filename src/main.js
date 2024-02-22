@@ -1,6 +1,7 @@
 import path from 'path';
 import {migratePosts} from "./posts.js";
 import {migrateImages} from "./images.js";
+import {createZipFile} from "./zip.js";
 
 export default function main() {
 
@@ -12,4 +13,6 @@ export default function main() {
   }
   migratePosts(options);
   migrateImages(options);
+
+  createZipFile(options);
 }

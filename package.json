@@ -6,6 +6,7 @@
     "test": "ava"
   },
   "dependencies": {
+    "archiver": "^6.0.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
