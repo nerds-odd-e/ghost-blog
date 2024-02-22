@@ -1,5 +1,5 @@
 import test from 'ava';
-import {processHtml} from '../src/main.js';
+import {processHtml} from '../src/posts.js';
 
 test('update urls for ghost - replace domain and path', t => {
   t.is(processHtml('<p><img src="https://blog.odd-e.com/yilv/a.jpg" alt="1.jpg" /></p>'),
