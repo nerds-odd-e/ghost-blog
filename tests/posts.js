@@ -9,6 +9,8 @@ test('update urls for ghost - replace domain and path', t => {
 test('update urls for ghost - replace space and other special characters with only one dash', t => {
   t.is(processHtml('<p><img src="https://blog.odd-e.com/yilv/develop%20causal%20%26%20dynamic%20thinking.jpg" alt="1.jpg" /></p>'),
     '<p><img src="https://localhost:8080/content/images/develop-causal-dynamic-thinking.jpg" alt="1.jpg" /></p>')
+  t.is(processHtml('<p><img src="https://blog.odd-e.com/yilv/with%20or%20without%20shared-component%20team%20-%201.jpg" alt="1.jpg" /></p>'),
+    '<p><img src="https://localhost:8080/content/images/with-or-without-shared-component-team-1.jpg" alt="1.jpg" /></p>')
 })
 
 test('update urls for ghost - remove thumb tail', t => {

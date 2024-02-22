@@ -60,7 +60,7 @@ export function processHtml(html) {
   console.log(html.match(assetUrlRegex));
   return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => {
     //TODO: html/pdf/jpg/png
-    return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-')}.${ext}"`;
+    return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/-+/g, '-')}.${ext}"`;
   });
 }
 
