@@ -3,15 +3,17 @@ import fs from 'fs';
 import path from 'path';
 import {migratePosts} from "./posts.js";
 
-const outputDir = 'output';
-const outputContentDir = path.join(outputDir, 'blog');
 
 
 export default function main() {
 
-  const backupDir = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/';
-  //Movable_Type-2024-01-19-13-48-55-Backup-1.xml
-  migratePosts(backupDir, outputContentDir);
+  const outputDir = 'output';
+  const options = {
+    outputDir: outputDir,
+    outputContentDir: path.join(outputDir, 'blog'),
+    backupDir: process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/',
+  }
+  migratePosts(options);
 
   //renameImages(path.dirname(backupDir));
 }

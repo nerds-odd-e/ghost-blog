@@ -2,10 +2,10 @@ import fs from "fs";
 import path from "path";
 import xml from "xml2js";
 
-export function migratePosts(backupDir, outputContentDir) {
-  const originalData = loadMovableTypeData(backupDir);
+export function migratePosts(options) {
+  const originalData = loadMovableTypeData(options.backupDir);
   let blog = generateGhostData(originalData);
-  writeToJsonFile(blog, outputContentDir);
+  writeToJsonFile(blog, options.outputContentDir);
 }
 
 function findXmlFile(backupDir) {
