@@ -5,7 +5,7 @@ import xml from "xml2js";
 export function migratePosts(options) {
   const originalData = loadMovableTypeData(options.backupDir);
   let blog = generateGhostData(originalData);
-  writeToJsonFile(blog, options.outputContentDir);
+  writeToJsonFile(blog, options.contentDir);
 }
 
 function findXmlFile(backupDir) {
