@@ -6,8 +6,10 @@ main();
 
 function main() {
 
-  const xmlfile = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/Movable_Type-2024-01-19-13-48-55-Backup-1.xml';
-  const content = loadContent(xmlfile);
+  const backupDir = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/';
+  //Movable_Type-2024-01-19-13-48-55-Backup-1.xml
+  const xmlfile = fs.readdirSync(backupDir).filter(fn => fn.endsWith('.xml') && fn.startsWith('Movable_Type'))[0];
+  const content = loadContent(path.join(backupDir,xmlfile));
   let blog = {
     "meta":{
       "exported_on":  1388805572000,
@@ -25,7 +27,7 @@ function main() {
 
   fs.writeFileSync('blog.json', json, 'utf8');
 
-  renameImages(path.dirname(xmlfile));
+  //renameImages(path.dirname(backupDir));
 }
 
 
@@ -101,14 +103,14 @@ function renameImages(backupDir) {
     if (err) return console.error(err);
     files.forEach((file) => {
       if (file.endsWith('.jpg') || file.endsWith('.jpeg') || file.endsWith('.png')) {
-        const newFile = file.replace(/^\d{1,4}-/, '');
-        const origPath = path.join(backupDir, file)
-        const newFilePath = path.join(backupDir, newFile)
-        fs.rename(origPath, newFilePath, (err) => {
+        const new_file = file.replace(/^\d{1,4}-/, '');
+        const orig_path = path.join(backupDir, file)
+        const new_file_path = path.join(backupDir, new_file)
+        fs.rename(orig_path, new_file_path, (err) => {
           if (err) {
             console.error(err);
           } else {
-            console.log(origPath, '->', newFilePath);
+            console.log(orig_path, '->', new_file_path);
           }
         });
       }
