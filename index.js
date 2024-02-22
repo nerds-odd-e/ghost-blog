@@ -1,3 +1,3 @@
-import main from './src/migrate.js';
+import main from './src/main.js';
 
 main();

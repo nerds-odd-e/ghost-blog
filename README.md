@@ -16,7 +16,7 @@ The plan is to move the blog to `fluxparty` k8s cluster and use <https://ghost.o
   git clone git@github.com:nerds-odd-e/blog-migrate.git
   cd blog-migrate
   yarn
-  node migrate.js $MT_BACKUP_DIR/$MT_BACKUP.xml # -> blog.json + renames images
+  node index.js $MT_BACKUP_DIR/$MT_BACKUP.xml # -> blog.json + renames images
   ```
 
 2. Test locally
