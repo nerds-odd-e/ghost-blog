@@ -31,8 +31,7 @@ function generateGhostData(content) {
 
 function loadMovableTypeData(backupDir) {
   let xmlFilePath = findXmlFile(backupDir);
-  const content = loadContent(xmlFilePath);
-  return content;
+  return loadContent(xmlFilePath);
 }
 
 function writeToJsonFile(blog, outputContentDir) {
@@ -91,7 +90,6 @@ function extractData(content) {
       post.title = entry.$.title;
       post.status = "published";
       post.published_at = convertTimeFormat(entry.$.authored_on);
-      // post.lexical = htmlToLexicalString(entry.text[0]);
       post.html = processHtml(entry.text[0]);
       data.posts.push(post);
 
