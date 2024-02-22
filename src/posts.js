@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import xml from "xml2js";
+import {ensureDir} from "./dir.js";
 
 export function migratePosts(options) {
   const originalData = loadMovableTypeData(options.backupDir);
@@ -38,12 +39,6 @@ function writeToJsonFile(blog, outputContentDir) {
   const json = JSON.stringify(blog, null, 2);
   ensureDir(outputContentDir);
   fs.writeFileSync(path.join(outputContentDir, 'blog.json'), json, 'utf8');
-}
-
-function ensureDir(dir) {
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir, { recursive: true });
-  }
 }
 
 function convertTimeFormat(time) {
