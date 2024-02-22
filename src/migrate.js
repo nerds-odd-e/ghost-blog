@@ -4,7 +4,6 @@ import path from 'path';
 
 const outputDir = 'output';
 const outputContentDir = path.join(outputDir, 'blog');
-main();
 
 function findXmlFile(backupDir) {
   const xmlFileName = fs.readdirSync(backupDir).filter(fn => fn.endsWith('.xml') && fn.startsWith('Movable_Type'))[0];
@@ -45,7 +44,7 @@ function migratePosts(backupDir) {
   writeToJsonFile(blog);
 }
 
-function main() {
+export default function main() {
 
   const backupDir = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/';
   //Movable_Type-2024-01-19-13-48-55-Backup-1.xml
