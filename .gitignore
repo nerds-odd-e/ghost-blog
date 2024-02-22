@@ -1,4 +1,4 @@
-built/
+.idea/
+output/
 node_modules/
-blog.json
 
