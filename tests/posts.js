@@ -39,3 +39,8 @@ test('update urls for ghost - dot in the image name', t => {
   t.is(processHtml('<p><img src="https://blog.odd-e.com/yilv/assets_c/2023/10/a-b-1.3.jpg" alt="1.jpg" /></p>'),
     '<p><img src="https://localhost:8080/content/images/a-b-1.3.jpg" alt="1.jpg" /></p>')
 })
+
+test('update urls for ghost - Keep unchanged if url is other than html, jpg, png', t => {
+  t.is(processHtml('<a href=\"http://blog.odd-e.com/basvodde/shared%20responsibility.pdf\"></a>'),
+    '<a href=\"http://blog.odd-e.com/basvodde/shared%20responsibility.pdf\"></a>');
+})
