@@ -6,30 +6,50 @@ const outputDir = 'output';
 const outputContentDir = path.join(outputDir, 'blog');
 main();
 
-function main() {
+function findXmlFile(backupDir) {
+  const xmlFileName = fs.readdirSync(backupDir).filter(fn => fn.endsWith('.xml') && fn.startsWith('Movable_Type'))[0];
+  return path.join(backupDir, xmlFileName);
+}
 
-  const backupDir = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/';
-  //Movable_Type-2024-01-19-13-48-55-Backup-1.xml
-
-  const xmlfile = fs.readdirSync(backupDir).filter(fn => fn.endsWith('.xml') && fn.startsWith('Movable_Type'))[0];
-  const content = loadContent(path.join(backupDir,xmlfile));
+function generateGhostData(content) {
   let blog = {
-    "meta":{
-      "exported_on":  1388805572000,
-      "version":      "5.76.0"
+    "meta": {
+      "exported_on": 1388805572000,
+      "version": "5.76.0"
     },
-    "data":{
+    "data": {
       "posts": [],
       "posts_authors": [],
       "users": [],
     }
   };
   blog.data = extractData(content);
+  return blog;
+}
 
+function loadMovableTypeData(backupDir) {
+  let xmlFilePath = findXmlFile(backupDir);
+  const content = loadContent(xmlFilePath);
+  return content;
+}
+
+function writeToJsonFile(blog) {
   const json = JSON.stringify(blog, null, 2);
-
   ensureDir(outputContentDir);
-  fs.writeFileSync(path.join(outputContentDir,'blog.json'), json, 'utf8');
+  fs.writeFileSync(path.join(outputContentDir, 'blog.json'), json, 'utf8');
+}
+
+function migratePosts(backupDir) {
+  const originalData = loadMovableTypeData(backupDir);
+  let blog = generateGhostData(originalData);
+  writeToJsonFile(blog);
+}
+
+function main() {
+
+  const backupDir = process.argv[2] || '/Users/zbcjackson/Downloads/Movable_Type-2024-01-19-13-49-15-Backup/';
+  //Movable_Type-2024-01-19-13-48-55-Backup-1.xml
+  migratePosts(backupDir);
 
   //renameImages(path.dirname(backupDir));
 }
@@ -57,7 +77,10 @@ function loadContent(path) {
 export function processHtml(html) {
   let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(.*?)"/g;
   console.log(html.match(assetUrlRegex));
-  return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-')}.${ext}"`);
+  return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => {
+    //TODO: html/pdf/jpg/png
+    return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-')}.${ext}"`;
+  });
 }
 
 function extractData(content) {
