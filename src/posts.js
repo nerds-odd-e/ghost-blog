@@ -56,11 +56,23 @@ function loadContent(path) {
 }
 
 export function processHtml(html) {
-  let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(.*?)"/g;
+  let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(\w+?)"/g;
   console.log(html.match(assetUrlRegex));
   return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => {
-    //TODO: html/pdf/jpg/png
-    return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/-+/g, '-')}.${ext}"`;
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
+      case 'html':
+        //TODO: https://blog.odd-e.com/yilv/2018/07/seeing-system-dynamics-in-organizational-change---1-from-change-resistance-to-limits-to-growth.html
+        // should be http://localhost:8080/seeing-system-dynamics-in-organizational-change--1--from-change-resistance-to-limits-to-growth/
+        // since the title is "Seeing system dynamics in organizational change: 1) from change resistance to limits to growth"
+        return `"https://localhost:8080/${filename}"`;
+      default:
+        console.warn(`Unknown file type: ${ext}`);
+        return match;
+    }
   });
 }
 
