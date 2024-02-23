@@ -5,7 +5,7 @@ import {ensureDir} from "./dir.js";
 
 export function migratePosts(options) {
   const originalData = loadMovableTypeData(options.backupDir);
-  let blog = generateGhostData(originalData);
+  let blog = generateGhostData(originalData, options);
   writeToJsonFile(blog, options.contentDir);
 }
 
@@ -14,7 +14,7 @@ function findXmlFile(backupDir) {
   return path.join(backupDir, xmlFileName);
 }
 
-function generateGhostData(content) {
+function generateGhostData(content, options) {
   let blog = {
     "meta": {
       "exported_on": 1388805572000,
@@ -26,7 +26,7 @@ function generateGhostData(content) {
       "users": [],
     }
   };
-  blog.data = extractData(content);
+  blog.data = extractData(content, options);
   return blog;
 }
 
@@ -55,20 +55,19 @@ function loadContent(path) {
   return fs.readFileSync(path, 'utf8');
 }
 
-export function processHtml(html) {
+export function processHtml(html, host) {
   let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(\w+?)"/g;
-  console.log(html.match(assetUrlRegex));
   return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => {
     switch (ext) {
       case 'jpg':
       case 'jpeg':
       case 'png':
-        return `"https://localhost:8080/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
+        return `"${host}/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
       case 'html':
         //TODO: https://blog.odd-e.com/yilv/2018/07/seeing-system-dynamics-in-organizational-change---1-from-change-resistance-to-limits-to-growth.html
         // should be http://localhost:8080/seeing-system-dynamics-in-organizational-change--1--from-change-resistance-to-limits-to-growth/
         // since the title is "Seeing system dynamics in organizational change: 1) from change resistance to limits to growth"
-        return `"https://localhost:8080/${filename}"`;
+        return `"${host}/${filename}"`;
       default:
         console.warn(`Unknown file type: ${ext}`);
         return match;
@@ -76,7 +75,7 @@ export function processHtml(html) {
   });
 }
 
-function extractData(content) {
+function extractData(content, options) {
   let data = {
     posts: [],
     posts_authors: [],
@@ -97,7 +96,7 @@ function extractData(content) {
       post.title = entry.$.title;
       post.status = "published";
       post.published_at = convertTimeFormat(entry.$.authored_on);
-      post.html = processHtml(entry.text[0]);
+      post.html = processHtml(entry.text[0], options.host);
       data.posts.push(post);
 
       let user = data.users.find((user) => user.id === entry.$.author_id);
