@@ -4,7 +4,7 @@ import xml from "xml2js";
 import {ensureDir} from "./dir.js";
 
 export function migratePosts(options) {
-  const originalData = loadMovableTypeData(options.backupDir);
+  const originalData = loadMovableTypeData(options.extractDir);
   let blog = generateGhostData(originalData, options);
   writeToJsonFile(blog, options.contentDir);
 }

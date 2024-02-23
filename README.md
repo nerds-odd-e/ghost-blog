@@ -16,12 +16,11 @@ The plan is to move the blog to `fluxparty` k8s cluster and use <https://ghost.o
   git clone git@github.com:nerds-odd-e/blog-migrate.git
   cd blog-migrate
   yarn
-  NODE_ENV=production node index.js $MT_BACKUP_DIR/
+  NODE_ENV=production node index.js $MT_BACKUP_FILE
   ```
 To test locally, set `NODE_ENV=test`, or just remove the env var.
 
 2. Test locally
 
-  - Create a zip archive with blog.json and images in `$MT_BACKUP_DIR`
   - `docker-compose up`
-  - Go to `http://localhost:8080/ghost/`. Create admin account if 1st time. Then go to Settings -> Advanced -> Lab -> Import and upload the zip archive
+  - Go to `http://localhost:8080/ghost/`. Create admin account if 1st time. Then go to Settings -> Advanced -> Lab -> Import and upload `output/blog.zip`.

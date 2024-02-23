@@ -5,10 +5,10 @@ import {ensureDir} from "./dir.js";
 export function migrateImages(options) {
   const imageDir = path.join(options.contentDir, 'content', 'images');
   ensureDir(imageDir);
-  fs.readdir(options.backupDir, (err, files) => {
+  fs.readdir(options.extractDir, (err, files) => {
     if (err) return console.error(err);
     files.filter(imagesWithoutThumb).forEach((file) => {
-      const sourcePath = path.join(options.backupDir, file)
+      const sourcePath = path.join(options.extractDir, file)
       let newFileName = updateFileName(file);
       const destinationPath = path.join(imageDir, newFileName)
       fs.copyFileSync(sourcePath, destinationPath);
