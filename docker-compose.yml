@@ -3,7 +3,9 @@ version: '3.1'
 services:
 
   ghost:
-    image: ghost:5.79
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - 8080:2368
@@ -18,6 +20,13 @@ services:
       url: http://localhost:8080
       # contrary to the default mentioned in the linked documentation, this image defaults to NODE_ENV=production (so development mode needs to be explicitly specified if desired)
       #NODE_ENV: development
+      storage__active: s3
+      storage__s3__accessKeyId: ENJOZ3AP8X19L3ZWB7LA
+      storage__s3__secretAccessKey: ffEr4GBcDRPkEEBzhQszDuBi9hXsiO0MbYAMifrF
+      storage__s3__region: us-lax-1
+      storage__s3__bucket: blog
+      storage__s3__assetHost: //blog.us-lax-1.linodeobjects.com
+      storage__s3__endpoint: us-lax-1.linodeobjects.com
     volumes:
       - ghost:/var/lib/ghost/content
 
