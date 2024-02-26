@@ -20,13 +20,13 @@ services:
       url: http://localhost:8080
       # contrary to the default mentioned in the linked documentation, this image defaults to NODE_ENV=production (so development mode needs to be explicitly specified if desired)
       #NODE_ENV: development
-      storage__active: s3
-      storage__s3__accessKeyId: ENJOZ3AP8X19L3ZWB7LA
-      storage__s3__secretAccessKey: ffEr4GBcDRPkEEBzhQszDuBi9hXsiO0MbYAMifrF
-      storage__s3__region: us-lax-1
-      storage__s3__bucket: blog
-      storage__s3__assetHost: //blog.us-lax-1.linodeobjects.com
-      storage__s3__endpoint: us-lax-1.linodeobjects.com
+      storage__active: ${BLOG_STORAGE}
+      storage__s3__accessKeyId: ${BLOG_STORAGE_ACCESS_KEY_ID}
+      storage__s3__secretAccessKey: ${BLOG_STORAGE_SECRET_ACCESS_KEY}
+      storage__s3__region: ${BLOG_STORAGE_REGION}
+      storage__s3__bucket: ${BLOG_STORAGE_BUCKET}
+      storage__s3__assetHost: ${BLOG_STORAGE_ASSET_HOST}
+      storage__s3__endpoint: ${BLOG_STORAGE_ENDPOINT}
     volumes:
       - ghost:/var/lib/ghost/content
 
