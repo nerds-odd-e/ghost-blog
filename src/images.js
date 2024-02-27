@@ -1,17 +1,19 @@
 import fs from "fs";
 import path from "path";
 import {ensureDir} from "./dir.js";
+import {uploadIfNotExists} from "./s3.js";
 
 export function migrateImages(options) {
-  const imageDir = path.join(options.contentDir, 'content', 'images');
-  ensureDir(imageDir);
+  // const imageDir = path.join(options.contentDir, 'content', 'images');
+  // ensureDir(imageDir);
   fs.readdir(options.extractDir, (err, files) => {
     if (err) return console.error(err);
     files.filter(imagesWithoutThumb).forEach((file) => {
-      const sourcePath = path.join(options.extractDir, file)
+      const sourcePath = path.join(options.extractDir, file);
       let newFileName = updateFileName(file);
-      const destinationPath = path.join(imageDir, newFileName)
-      fs.copyFileSync(sourcePath, destinationPath);
+      const destinationPath = path.join('content', 'images', newFileName);
+      // fs.copyFileSync(sourcePath, destinationPath);
+      uploadIfNotExists(sourcePath, destinationPath, options);
     })
   })
 }

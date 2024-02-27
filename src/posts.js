@@ -96,7 +96,7 @@ function extractData(content, options) {
       post.title = entry.$.title;
       post.status = "published";
       post.published_at = convertTimeFormat(entry.$.authored_on);
-      post.html = processHtml(entry.text[0], options.host);
+      post.html = processHtml(entry.text[0], options.s3.assetHost);
       data.posts.push(post);
 
       let user = data.users.find((user) => user.id === entry.$.author_id);
