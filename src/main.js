@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import {migratePosts} from "./posts.js";
 import {migrateImages} from "./images.js";
 import {createZipFile, extractArchive} from "./zip.js";
-import {create} from "tar";
 
 const env = process.env.NODE_ENV;
 dotenv.config({ path: path.resolve(process.cwd(), `.env${env ? `.${env}` : ""}`) });
