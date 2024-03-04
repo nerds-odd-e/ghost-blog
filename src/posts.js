@@ -14,6 +14,26 @@ function findXmlFile(backupDir) {
   return path.join(backupDir, xmlFileName);
 }
 
+function fixPostLinks(blog, options) {
+  var postUrls = [];
+  for (let post of blog.data.posts) {
+    var url = post.title.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    var slug = url.replace(/-+/g, '-').replace(/^-|-$/g, '');
+    var postUrl = {id: post.id, slug, url};
+    postUrls.push(postUrl);
+  }
+  for (let post of blog.data.posts) {
+    post.html = post.html.replace(new RegExp(`href="${options.host}/([^<>/ ]*?)"`, "g"), (match, title) => {
+      var postUrl = postUrls.find(pu => pu.slug === title.replace(/-+/g, '-'));
+      if (postUrl) {
+        return `href="${options.host}/${postUrl.url}"`;
+      }
+      console.warn(match);
+      return match;
+    });
+  }
+}
+
 function generateGhostData(content, options) {
   let blog = {
     "meta": {
@@ -27,6 +47,7 @@ function generateGhostData(content, options) {
     }
   };
   blog.data = extractData(content, options);
+  fixPostLinks(blog, options);
   return blog;
 }
 
@@ -55,19 +76,19 @@ function loadContent(path) {
   return fs.readFileSync(path, 'utf8');
 }
 
-export function processHtml(html, host) {
+export function processHtml(html, options) {
   let assetUrlRegex = /"http(s?):\/\/blog.odd-e.com\/([\w\/]*)\/(.*?)(-thumb.*?)?\.(\w+?)"/g;
   return html.replace(assetUrlRegex, (match, https, path, filename, thumb, ext) => {
     switch (ext) {
       case 'jpg':
       case 'jpeg':
       case 'png':
-        return `"${host}/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
+        return `"${options.s3.assetHost}/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
       case 'html':
         //TODO: https://blog.odd-e.com/yilv/2018/07/seeing-system-dynamics-in-organizational-change---1-from-change-resistance-to-limits-to-growth.html
         // should be http://localhost:8080/seeing-system-dynamics-in-organizational-change--1--from-change-resistance-to-limits-to-growth/
         // since the title is "Seeing system dynamics in organizational change: 1) from change resistance to limits to growth"
-        return `"${host}/${filename}"`;
+        return `"${options.host}/${filename}"`;
       default:
         console.warn(`Unknown file type: ${ext}`);
         return match;
@@ -96,7 +117,7 @@ function extractData(content, options) {
       post.title = entry.$.title;
       post.status = "published";
       post.published_at = convertTimeFormat(entry.$.authored_on);
-      post.html = processHtml(entry.text[0], options.s3.assetHost);
+      post.html = processHtml(entry.text[0], options);
       data.posts.push(post);
 
       let user = data.users.find((user) => user.id === entry.$.author_id);
