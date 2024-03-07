@@ -85,9 +85,6 @@ export function processHtml(html, options) {
       case 'png':
         return `"${options.s3.assetHost}/content/images/${filename.replace(/(%\d\d)+/g, '-').replace(/\.?-+/g, '-')}.${ext}"`;
       case 'html':
-        //TODO: https://blog.odd-e.com/yilv/2018/07/seeing-system-dynamics-in-organizational-change---1-from-change-resistance-to-limits-to-growth.html
-        // should be http://localhost:8080/seeing-system-dynamics-in-organizational-change--1--from-change-resistance-to-limits-to-growth/
-        // since the title is "Seeing system dynamics in organizational change: 1) from change resistance to limits to growth"
         return `"${options.host}/${filename}"`;
       default:
         console.warn(`Unknown file type: ${ext}`);
