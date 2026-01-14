@@ -29,6 +29,9 @@ services:
       storage__s3__endpoint: ${BLOG_STORAGE_ENDPOINT}
     volumes:
       - ghost:/var/lib/ghost/content
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0
@@ -37,6 +40,11 @@ services:
       MYSQL_ROOT_PASSWORD: example
     volumes:
       - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   ghost:
